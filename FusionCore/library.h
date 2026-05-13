@@ -21,6 +21,15 @@ public:
 
     // Умножение на скаляр
     Tensor mul(float scalar) const;
+
+    Tensor subtract(const Tensor& other) const;
+    Tensor divide(float scalar) const;
+    Tensor matmul(const Tensor& other) const;
+    Tensor transpose() const;
+    float mean() const;
+
+    static Tensor zeros(const std::vector<int>& shape);
+
 };
 
 #endif //FUSIONCORE_LIBRARY_H

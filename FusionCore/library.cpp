@@ -35,17 +35,81 @@ Tensor Tensor::mul(float scalar) const {
     return Tensor(result, shape);
 }
 
+Tensor Tensor::subtract(const Tensor &other) const {
+    if (data.size() != other.data.size()) {
+        throw std::invalid_argument("Tensor size mismatch in subtract");
+    }
+    std::vector<float> result(data.size());
+    for (size_t i = 0; i < data.size(); ++i) {
+        result[i] = data[i] - other.data[i];
+    }
+    return Tensor(result, shape);
+}
+
+Tensor Tensor::divide(float scalar) const {
+    if (scalar == 0.0f) throw std::invalid_argument("Divide by zero");
+    std::vector<float> result(data.size());
+    for (size_t i = 0; i < data.size(); ++i) {
+        result[i] = data[i] / scalar;
+    }
+    return Tensor(result, shape);
+}
+
+
+Tensor Tensor::matmul(const Tensor& other) const {
+    if (shape.size() != 2 || other.shape.size() != 2 ) {
+        throw std::invalid_argument("Matmul requires 2D tensors (Fixed in future!)");
+    }
+    int m = shape[0];
+    int k = shape[1];
+    int k2 = other.shape[0];
+    int n = other.shape[1];
+    if (k != k2) {
+        throw std::invalid_argument("Incompatible shapes for matmul");
+    }
+    std::vector<float> result(m * n, 0.0f);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; i < n; ++j) {
+            float sum = 0.0f;
+            for (int p = 0; p < k; ++p) {
+                sum += data[i * k + p] * other.data[p * n + j];
+            }
+            result[i * n + j] = sum;
+        }
+    }
+    return Tensor(result, {m, n});
+}
+
+float Tensor::mean() const {
+    return sum() / static_cast<float>(data.size());
+}
+
+Tensor Tensor::zeros(const std::vector<int>& shape) {
+    size_t size = 1;
+    for (int d : shape) size *= d;
+    std::vector<float> data(size, 0.0f);
+    return Tensor(data, shape);
+}
+
+
+
 namespace py = pybind11;
 
 PYBIND11_MODULE(_fusion_core, m) {
-    m.doc() = "FusionCore: high-performance ML library with Python simplicity";
+    m.doc() = "Fusion: high-performance ML library with Python simplicity";
 
     py::class_<Tensor>(m, "Tensor")
         .def(py::init<const std::vector<float>&, const std::vector<int>&>(),
              py::arg("data"), py::arg("shape") = std::vector<int>{},
-             "Create a Tensor from a flat list of data and a shape")
+             "Create a Tensor from flat data and shape")
         .def("sum", &Tensor::sum, "Sum of all elements")
         .def("__add__", &Tensor::add, "Element-wise addition")
         .def("__mul__", &Tensor::mul, "Multiply by scalar")
+        .def("__sub__", &Tensor::subtract, "Element-wise subtraction")
+        .def("__truediv__", &Tensor::divide, "Divide by scalar")
+        .def("matmul", &Tensor::matmul, "Matrix multiplication")
+        .def("transpose", &Tensor::transpose, "Transpose 2D tensor")
+        .def("mean", &Tensor::mean, "Mean of all elements")
+        .def_static("zeros", &Tensor::zeros, "Create a tensor filled with zeros")
         .def_readonly("shape", &Tensor::shape, "Shape of the tensor");
-}
+}   
