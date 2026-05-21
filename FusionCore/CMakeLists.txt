@@ -4,8 +4,8 @@ project(FusionCore)
 set(CMAKE_CXX_STANDARD 17)
 
 # ----- Фиксация Python из окружения проекта (untitled4) -----
-set(Python3_ROOT "C:/Users/Фёдор/.conda/envs/untitled4")
-set(Python3_FIND_STRATEGY LOCATION)
+# set(Python3_ROOT "C:/Users/Фёдор/.conda/envs/untitled4")  # закомментировать для ноута
+# set(Python3_FIND_STRATEGY LOCATION)  # закомментировать для ноута
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Python3: ${Python3_EXECUTABLE} (version ${Python3_VERSION})")
 

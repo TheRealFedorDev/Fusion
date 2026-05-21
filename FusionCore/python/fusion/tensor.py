@@ -1,6 +1,8 @@
-# python/fusion/tensor.py
 import sys
-sys.path.insert(0, r'C:\Users\Фёдор\CLionProjects\untitled4\FusionCore\cmake-build-debug')
+import os
+
+sys.path.insert(0, os.path.dirname(__file__))
+
 from _fusion_core import Tensor as _Tensor
 
 def tensor(data, shape=None):

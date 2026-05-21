@@ -21,6 +21,7 @@ public:
 
     // Умножение на скаляр
     Tensor mul(float scalar) const;
+    Tensor mul(const Tensor& other) const;   // поэлементное умножение двух тензоров
 
     Tensor subtract(const Tensor& other) const;
     Tensor divide(float scalar) const;
