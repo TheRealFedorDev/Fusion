@@ -15,6 +15,7 @@ public:
 
     // Сумма
     float sum() const;
+    float mean() const;   // сраф ёпт
 
     // Поэлементное сложение
     Tensor add(const Tensor& other) const;
@@ -23,13 +24,18 @@ public:
     Tensor mul(float scalar) const;
     Tensor mul(const Tensor& other) const;   // поэлементное умножение двух тензоров
 
-    Tensor subtract(const Tensor& other) const;
-    Tensor divide(float scalar) const;
-    Tensor matmul(const Tensor& other) const;
-    Tensor transpose() const;
-    float mean() const;
+    Tensor subtract(const Tensor& other) const;   // вычитание матриц
+    Tensor divide(float scalar) const;    // деление на скаляр
+    Tensor matmul(const Tensor& other) const;   // перемножение матриц
+    Tensor transpose() const;  // транспонирование
+    Tensor pow(int power) const;     // возведение матрицы в степень
 
-    static Tensor zeros(const std::vector<int>& shape);
+
+    std::string toString() const;
+
+
+
+    static Tensor zeros(const std::vector<int>& shape);   // заполнение нулями
 
 };
 

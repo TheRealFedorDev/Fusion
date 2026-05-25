@@ -1,12 +1,11 @@
 import numpy as np
 
 import sys
-sys.path.insert(0, '.')
-from fusion.tensor import tensor
+sys.path.insert(0, 'fusion')
+from fusion.tensor import Tensor
+
 from fusion.linear_model import LinearRegression
 
-a = tensor([1.0, 2.0, 3.0, 4.0], [2, 2])
-b = tensor([0.5, 0.5, 0.5, 0.5], [2, 2])
-c = a + b
-print("Sum:", c.sum())
-print("Shape:", c.shape)
+a = Tensor([1.0, 2.0, 3.0], [3])
+print(a)
+print(a.tolist())

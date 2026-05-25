@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import sys
 sys.path.insert(0, '.')
-from fusion.tensor import tensor
+from fusion.tensor import Tensor
 from fusion.linear_model import LinearRegression
 
 # Загрузка данных
@@ -13,7 +13,7 @@ X_np, y_np = data.data, data.target.reshape(-1, 1)
 X_train_np, X_test_np, y_train_np, y_test_np = train_test_split(
     X_np, y_np, test_size=0.2, random_state=42
 )
-
+print("Segmentation success")
 # Нормализация признаков (иначе градиентный спуск расходится)
 scaler = StandardScaler()
 X_train_np = scaler.fit_transform(X_train_np)
@@ -25,15 +25,15 @@ y_train_np = y_scaler.fit_transform(y_train_np)
 y_test_np = y_scaler.transform(y_test_np)
 
 # Преобразование в тензоры Fusion
-X_train = tensor(X_train_np.flatten().tolist(), list(X_train_np.shape))
-y_train = tensor(y_train_np.flatten().tolist(), list(y_train_np.shape))
-X_test  = tensor(X_test_np.flatten().tolist(), list(X_test_np.shape))
-y_test  = tensor(y_test_np.flatten().tolist(), list(y_test_np.shape))
-
+X_train = Tensor(X_train_np.flatten().tolist(), list(X_train_np.shape))
+y_train = Tensor(y_train_np.flatten().tolist(), list(y_train_np.shape))
+X_test  = Tensor(X_test_np.flatten().tolist(), list(X_test_np.shape))
+y_test  = Tensor(y_test_np.flatten().tolist(), list(y_test_np.shape))
+print("Starting Training")
 # Обучение линейной регрессии (уменьшенный lr)
 model = LinearRegression(lr=0.01, epochs=1000)
 model.fit(X_train, y_train)
-
+print("Train complete")
 # Предсказания
 pred_train = model.predict(X_train)
 pred_test  = model.predict(X_test)
