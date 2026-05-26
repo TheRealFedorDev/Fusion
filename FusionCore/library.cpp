@@ -3,11 +3,6 @@
 #include <pybind11/stl.h>
 #include <numeric>
 #include <stdexcept>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
 
 Tensor::Tensor(const std::vector<float>& data, const std::vector<int>& shape)
     : data(data), shape(shape) {
@@ -111,40 +106,6 @@ Tensor Tensor::transpose() const {
     return Tensor(result, {n, m});
 }
 
-Tensor Tensor::pow(int power) const {
-    std::vector<float> result(data.size());
-    if (power == 0) {
-        std::fill(result.begin(), result.end(), 1.0f);
-    } else {
-        for (size_t i = 0; i < data.size(); ++i) {
-            result[i] = std::pow(data[i], static_cast<float>(power));
-        }
-    }
-    return Tensor(result, shape);
-}
-
-std::string Tensor::toString() const {
-    std::ostringstream oss;
-    oss << "Tensor(shape=[";
-    for (size_t i = 0; i < data.size(); ++i) {
-        if (i > 0) oss << ", ";
-        oss << shape[i];
-    }
-    oss << "], data=[";
-
-    size_t max_show = 30;
-    for (size_t i = 0; i < data.size() && i < max_show; ++i) {
-        if (i > 0) oss << ", ";
-        oss << std::fixed << std::setprecision(4) << data[i];
-    }
-    if (data.size() > max_show) {
-        oss << ", ...";
-    }
-    oss << "])";
-    return oss.str();
-
-}
-
 float Tensor::mean() const {
     return sum() / static_cast<float>(data.size());
 }
@@ -181,11 +142,6 @@ PYBIND11_MODULE(_fusion_core, m) {
         .def("matmul", &Tensor::matmul, "Matrix multiplication")
         .def("transpose", &Tensor::transpose, "Transpose 2D tensor")
         .def("mean", &Tensor::mean, "Mean of all elements")
-        .def("__pow__", &Tensor::pow, "Raise each element to an integer power")
-        .def("__repr__", &Tensor::toString, "String representation of the tensor")
-        .def("tolist", [](const Tensor& self) -> std::vector<float> {
-            return self.data;
-        }, "Returns data as Python list")
         .def_static("zeros", &Tensor::zeros, "Create a tensor filled with zeros")
         .def_readonly("shape", &Tensor::shape, "Shape of the tensor");
 
